@@ -2,62 +2,61 @@ DROP SCHEMA IF EXISTS PERFUMES;
 CREATE SCHEMA PERFUMES;
 USE PERFUMES;
 
-create table clientes (
-	id int primary key,
-	nombre_cliente varchar(50),
-	apellido_cliente varchar(30),
+create table cliente (
+	id_cliente int not null primary key auto_increment,
+	nombre_cliente varchar(50) not null,
+	apellido_cliente varchar(30) not null,
 	direccion varchar(100),
-	telefono varchar(20),
-	email varchar(100)
+	telefono varchar(20) not null,
+	email varchar(100) not null
 );
 
-create table marcas (
-	id int primary key,
-    nombre_marca varchar(50),
+create table marca (
+	id_marca int not null primary key auto_increment,
+    nombre_marca varchar(50) not null,
     descripcion varchar(100)
 );
 
-create table fragancias (
-	id int primary key,
-	nombre_fragancia varchar(60),
+create table fragancia (
+	id_fragancia int not null primary key auto_increment,
+	nombre_fragancia varchar(60) not null,
     descripcion varchar(100)
 );
 
-create table notas_olfativas (
-	id int primary key,
-	nombre_nota varchar(60),
+create table nota_olfativa (
+	id_nota int not null primary key auto_increment,
+	nombre_nota varchar(60) not null,
     descripcion varchar(100)
 );
 
 
-create table productos (
-	id int primary key,
-	id_marca int,
-	id_fragancia int,
-	id_nota int,
-	tamaño int,
-	tipo varchar(50),
-    stock int,
-	foreign key(id_marca) references marcas(id),
-	foreign key(id_fragancia) references fragancias(id),
-    foreign key(id_nota) references notas_olfativas(id)
+create table producto (
+	id_producto int not null primary key auto_increment,
+	id_marca int not null,
+	id_fragancia int not null,
+	id_nota int not null,
+	tamaño int not null,
+	tipo varchar(50) not null,
+    stock int not null,
+	foreign key(id_marca) references marca(id_marca),
+	foreign key(id_fragancia) references fragancia(id_fragancia),
+    foreign key(id_nota) references nota_olfativa(id_nota)
 );
 
-create table ventas (
-	id int primary key,
-    fecha date,
-    id_cliente int,
-    total_venta decimal(10,2),
-    foreign key(id_cliente) references clientes(id)
+create table venta (
+	id_venta int not null primary key auto_increment,
+    fecha date not null,
+    id_cliente int not null,
+    total_venta decimal(10,2) not null,
+    foreign key(id_cliente) references cliente(id_cliente)
 );
 
-create table detalles_ventas (
-	id int primary key,
-    id_venta int,
-    id_producto int,
-    cantidad_vendida int,
-    precio_unitario decimal(10,2),
-    foreign key(id_venta) references ventas(id),
-    foreign key(id_producto) references productos(id)
+create table detalle_venta (
+	id_detalle int not null primary key auto_increment,
+    id_venta int not null,
+    id_producto int not null,
+    cantidad_vendida int not null,
+    precio_unitario decimal(10,2) not null,
+    foreign key(id_venta) references venta(id_venta),
+    foreign key(id_producto) references producto(id_producto)
 );
-
