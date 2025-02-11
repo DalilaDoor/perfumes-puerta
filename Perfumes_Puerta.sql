@@ -297,6 +297,7 @@ DELIMITER ;
 -- ___________________ STORED PROCEDURE _________________________________________________________________
 
 -- ___ Primer stored: REGISTRAR VENTA
+-- Inserta una venta y sus detalles en la base de datos, actualizando el stock de los productos vendidos.
 -- ejemplo para utilizar
 -- CALL registrar_venta(3, 250.00, '[{"id_producto": 1, "cantidad": 2, "precio_unitario": 100.00}, {"id_producto": 5, "cantidad": 1, "precio_unitario": 50.00}]');
 -- consultemos la tabla venta SELECT * FROM VENTA (si habiamos insertado 15 registros, con este deberían ser 16)
@@ -341,6 +342,7 @@ END //
 DELIMITER ;
 
 -- ___ Segundo stored: ACTUALIZAR STOCK DE PRODUCTO
+-- Modifica manualmente el stock de un producto en el inventario.
 -- ejemplo a utilizar
 -- CALL actualizar_stock_producto(2, 100);
 -- consultemos la tabla, SELECT * FROM producto
@@ -353,5 +355,47 @@ BEGIN
     UPDATE producto
     SET stock = p_nuevo_stock
     WHERE id_producto = p_id_producto;
+END //
+DELIMITER ;
+
+
+-- ______________________________________________________________________________________________________
+-- ___________________ TRIGGERS _________________________________________________________________________
+
+-- __ Primer trigger: ACTUALIZAR STOCK DESPUES DE VENTA
+-- Reduce automáticamente el stock de un producto cuando se registra una venta.
+
+DELIMITER //
+CREATE TRIGGER actualizar_stock_despues_de_venta
+AFTER INSERT ON detalle_venta
+FOR EACH ROW
+BEGIN
+    UPDATE producto
+    SET stock = stock - NEW.cantidad_vendida
+    WHERE id_producto = NEW.id_producto;
+END //
+DELIMITER ;
+
+
+-- __ Segundo trigger: EVITAR VENTA SIN STOCK
+-- Evita ventas cuando no hay suficiente stock disponible, protegiendo la integridad del inventario.
+
+DELIMITER //
+CREATE TRIGGER evitar_venta_sin_stock
+BEFORE INSERT ON detalle_venta
+FOR EACH ROW
+BEGIN
+    DECLARE stock_disponible INT;
+
+    -- Obtener el stock actual del producto
+    SELECT stock INTO stock_disponible
+    FROM producto
+    WHERE id_producto = NEW.id_producto;
+
+    -- Verificar si hay stock suficiente
+    IF stock_disponible < NEW.cantidad_vendida THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: No hay suficiente stock disponible para la venta';
+    END IF;
 END //
 DELIMITER ;
