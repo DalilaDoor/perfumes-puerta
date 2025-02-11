@@ -341,8 +341,9 @@ END //
 DELIMITER ;
 
 -- ___ Segundo stored: ACTUALIZAR STOCK DE PRODUCTO
--- 
-
+-- ejemplo a utilizar
+-- CALL actualizar_stock_producto(2, 100);
+-- consultemos la tabla, SELECT * FROM producto
 DELIMITER //
 CREATE PROCEDURE actualizar_stock_producto(
     IN p_id_producto INT,
