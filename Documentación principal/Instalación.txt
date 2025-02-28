@@ -1,0 +1,11 @@
+Para la correcta instalación de la base de datos, se debe referir a la carpeta "Archivos SQL" de este directorio y ejecutar los archivos internos en el siguiente orden:
+
+1.Creacion_tablas
+2.Insercion_tablas
+3.Creacion_vistas
+4.Creacion_funciones
+5.Creacion_procedures
+6.Creacion_triggers
+7.Creacion_DCL
+8.Creacion_TCL
+9.Backup

@@ -7,7 +7,7 @@
 -- CALL registrar_venta(3, 250.00, '[{"id_producto": 1, "cantidad": 2, "precio_unitario": 100.00}, {"id_producto": 5, "cantidad": 1, "precio_unitario": 50.00}]');
 -- consultemos la tabla venta SELECT * FROM VENTA (si habiamos insertado 15 registros, con este deberían ser 16)
 DELIMITER //
-CREATE PROCEDURE registrar_venta(
+CREATE PROCEDURE sp_registrar_venta(
     IN p_id_cliente INT,
     IN p_total_venta DECIMAL(10,2),
     IN p_productos JSON
@@ -52,7 +52,7 @@ DELIMITER ;
 -- CALL actualizar_stock_producto(2, 100);
 -- consultemos la tabla, SELECT * FROM producto
 DELIMITER //
-CREATE PROCEDURE actualizar_stock_producto(
+CREATE PROCEDURE sp_actualizar_stock_producto(
     IN p_id_producto INT,
     IN p_nuevo_stock INT
 )
