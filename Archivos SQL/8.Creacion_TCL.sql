@@ -22,16 +22,24 @@ COMMIT; -- Confirmamos la venta sin los detalles
 
 -- ________________________________________________________________________________
 
--- 2_ SEGUNDO TCL: SET TRANSACTION y COMMIT
--- Este ejemplo configura el nivel de aislamiento de una transacción y la confirma
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+-- 2_ SEGUNDO TCL: SAVEPOINT, COMMIT
+-- Ejmplo para manejar actualizaciones y revertir solo una parte de la transacción
+
+-- Iniciamos una transacción
 START TRANSACTION;
 
-UPDATE producto 
-SET stock = stock - 3 
-WHERE id_producto = 7;
+-- Actualizamos el stock de algunos productos
+UPDATE producto SET stock = stock - 1 WHERE id_producto = 1;  -- Producto 1
+UPDATE producto SET stock = stock - 2 WHERE id_producto = 2;  -- Producto 2
 
-INSERT INTO detalle_venta (id_venta, id_producto, cantidad_vendida, precio_unitario) 
-VALUES (21, 7, 3, 75.00);
+-- Creamos un punto de guardado después de las actualizaciones exitosas
+SAVEPOINT punto_actualizacion;
 
+-- Intentamos actualizar un producto que no tiene suficiente stock
+UPDATE producto SET stock = stock - 10 WHERE id_producto = 3;  -- Producto 3, stock insuficiente
+
+-- Como hubo un error (supongamos que el stock no es suficiente para la actualización), revertimos a punto_actualizacion
+ROLLBACK TO SAVEPOINT punto_actualizacion;
+
+-- Confirmamos la transacción, los cambios hasta el punto de guardado son efectivos
 COMMIT;
